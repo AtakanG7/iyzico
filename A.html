@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript">if (typeof iyziInit == 'undefined') {var iyziInit = {currency:"TRY",token:"6ed52e70-5725-432d-b677-2f70c43a71dc",price:1.00,locale:"tr",baseUrl:"https://sandbox-api.iyzipay.com", merchantGatewayBaseUrl:"https://sandbox-merchantgw.iyzipay.com", registerCardEnabled:true,bkmEnabled:true,bankTransferEnabled:false,bankTransferTimeLimit:{"value":5,"type":"day"},bankTransferRedirectUrl:"https://www.google.com",bankTransferCustomUIProps:{},campaignEnabled:false,campaignMarketingUiDisplay:null,paymentSourceName:"",plusInstallmentResponseList:null,payWithIyzicoSingleTab:false,payWithIyzicoSingleTabV2:false,payWithIyzicoOneTab:false,mixPaymentEnabled:true,creditCardEnabled:true,bankTransferAccounts:[],userCards:[],fundEnabled:true,memberCheckoutOtpData:{},force3Ds:false,isSandbox:true,storeNewCardEnabled:true,paymentWithNewCardEnabled:true,enabledApmTypes:["SOFORT","IDEAL","QIWI","GIROPAY"],payWithIyzicoUsed:false,payWithIyzicoEnabled:true,payWithIyzicoCustomUI:{},buyerName:"John",buyerSurname:"Doe",merchantInfo:"",merchantName:"Sandbox Merchant Name - 3395462",cancelUrl:"",buyerProtectionEnabled:false,hide3DS:false,gsmNumber:"",email:"email@email.com",checkConsumerDetail:{},subscriptionPaymentEnabled:false,ucsEnabled:false,fingerprintEnabled:false,payWithIyzicoFirstTab:false,creditEnabled:false,payWithIyzicoLead:false,goBackUrl:"",metadata : {},createTag:function(){var iyziJSTag = document.createElement('script');iyziJSTag.setAttribute('src','https://sandbox-static.iyzipay.com/checkoutform/v2/bundle.js?v=1708105154157');document.head.appendChild(iyziJSTag);}};iyziInit.createTag();}</script>
+</head>
+<body>
+<div id="iyzipay-checkout-form" class="responsive"></div>
+
+<script>
+    window.addEventListener('load', function () {
+        fetch("http://127.0.0.1:8000/user/payments/initialize-check-out-form", {
+            method: "GET"
+        }).then((res) => {
+            return res.json()
+        }).then((res) => {
+            console.log(res.checkoutFormContent);
+            eval(res.checkoutFormContent);
+        }).catch(err => {
+            console.log(err);
+        });
+    });
+</script>
+</body>
+</html>

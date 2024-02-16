@@ -2,9 +2,10 @@ from typing import Union
 from fastapi import FastAPI
 from Utils.iyzico import IyzicoPayHandler
 from fastapi.middleware.cors import CORSMiddleware
+import json
+iyzico_handler = IyzicoPayHandler()
 
 app = FastAPI()
-iyzico_handler = IyzicoPayHandler()
 # Allow all origins in this example (replace '*' with your specific allowed origins)
 origins = ["*"]
 
@@ -33,3 +34,13 @@ async def create_payment():
         cvc=123
     )
 
+
+@app.get("/user/payments/initialize-check-out-form")
+async def create_payment():
+    response = await iyzico_handler.initiazlizeCheckOutForm()
+    jsonResponse = json.loads(response)
+    return jsonResponse
+    
+@app.get("/user/payments/retrieve-check-out-form")
+async def create_payment(token):
+    return await iyzico_handler.retrieveCheckOutForm(token=token)

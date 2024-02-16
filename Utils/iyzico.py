@@ -22,7 +22,7 @@ class IyzicoPayHandler():
         save_card: Saves card
     """
 
-    async def __init__(self) -> None:
+    def __init__(self) -> None:
         self.options = CONFIG['options']
 
     async def create_card_and_user(self, cardAlias, cardHolderName, cardNumber, expireMonth, expireYear, email):
@@ -107,13 +107,11 @@ class IyzicoPayHandler():
             'gsmNumber': '+905350000000',
             'email': 'email@email.com',
             'identityNumber': '74300864791',
-            'lastLoginDate': '2015-10-05 12:43:35',
             'registrationDate': '2013-04-21 15:12:09',
             'registrationAddress': 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
             'ip': '85.34.78.112',
             'city': 'Istanbul',
             'country': 'Turkey',
-            'zipCode': '34732'
         }
 
         address = {
@@ -121,7 +119,6 @@ class IyzicoPayHandler():
             'city': 'Istanbul',
             'country': 'Turkey',
             'address': 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
-            'zipCode': '34732'
         }
 
         basket_items = [
@@ -141,8 +138,6 @@ class IyzicoPayHandler():
             'currency': 'TRY',
             'installment': '1',
             'basketId': 'B67832',
-            'paymentChannel': 'WEB',
-            'paymentGroup': 'PRODUCT',
             'paymentCard': payment_card,
             'buyer': buyer,
             'shippingAddress': address,
@@ -151,7 +146,6 @@ class IyzicoPayHandler():
         }
 
         payment = iyzipay.Payment().create(request, self.options)
-
         return payment
 
     async def create_sub_product(self, name, description):
@@ -313,3 +307,69 @@ class IyzicoPayHandler():
         request = { 
             "subscriptionReferenceCode": subscriptionReferenceCode,
         }
+
+    async def initiazlizeCheckOutForm(self):
+
+        shipppingAdress = {
+                "address": "Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1",
+                "contactName": "Jane Doe",
+                "city": "Istanbul",
+                "country": "Turkey"
+            }
+        
+        billingAdress = {
+                "address": "Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1",
+                "contactName": "Jane Doe",
+                "city": "Istanbul",
+                "country": "Turkey"
+            }
+        
+        callBackUrl = "https://www.google.com"
+
+        buyer = {
+                "id": "BY789",
+                "name": "John",
+                "surname": "Doe",
+                "identityNumber": "74300864791",
+                "email": "email@email.com",
+                "registrationAddress": "Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1",
+                "city": "Istanbul",
+                "country": "Turkey",
+            }
+
+        basketItems = [
+                {
+                    "id": "BI101",
+                    "price": "1",
+                    "name": "Binocular",
+                    "category1": "Collectibles",
+                    "itemType": "PHYSICAL"
+                }
+            ]
+
+        request = {
+            "locale": "tr", # Default as 'tr'
+            "price": "1", 
+            "buyer": buyer,
+            "shippingAddress":shipppingAdress,
+            "billingAddress": billingAdress,
+            "basketItems": basketItems,
+            "enabledInstallments": [1],
+            "callbackUrl": callBackUrl,
+            "currency": "TRY",
+            "paidPrice": "1"
+        }
+
+        report = iyzipay.CheckoutFormInitialize().create(request, self.options)
+        return report.read().decode('utf-8')
+    
+    async def retrieveCheckOutForm(self, token):
+
+        request =  {
+            "locale": "tr",
+            "conversationId": "123456789",
+            "token": token
+        }
+
+        report = iyzipay.CheckoutForm().retrieve(request, self.options)
+        return report.read().decode('utf-8')

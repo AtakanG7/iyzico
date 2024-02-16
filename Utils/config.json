@@ -1,7 +1,7 @@
 {
     "options": {
-        "api_key": "put your credentials",
-        "secret_key": "put your credentials",
+        "api_key": "sandbox-U5Kpfjpn1IiCkrifrfRYjkB9Ztewompp",
+        "secret_key": "k1uDsiMWPYKfDLRHW0KKAAqxHgsYzycj",
         "base_url": "sandbox-api.iyzipay.com"
     }
 }
