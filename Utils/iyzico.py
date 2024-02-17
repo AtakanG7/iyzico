@@ -89,55 +89,69 @@ class IyzicoPayHandler():
 
         return card_list.read().decode('utf-8')
     
-    async def create_payment(self, cardHolderName= None, cardNumber= None, expireMonth= None, expireYear= None, cvc= None, registerCard= None):
+    async def create_payment(self,
+            cardHolderName= None,
+            cardNumber= None,
+            expireMonth= None,
+            expireYear= None,
+            cvc= None,
+            id=None,
+            name=None,
+            surname=None,
+            email=None,
+            identityNumber=None,
+            registrationAddress=None,
+            ip=None,
+            city=None,
+            country=None,
+            price=None,
+        ):
 
         payment_card = {
-            'cardHolderName': 'John Doe',
-            'cardNumber': '5528790000000008',
-            'expireMonth': '12',
-            'expireYear': '2030',
-            'cvc': '123',
-            'registerCard': '0'
+            'cardHolderName': cardHolderName,
+            'cardNumber': cardNumber,
+            'expireMonth': expireMonth,
+            'expireYear': expireYear,
+            'cvc': cvc,
         }
 
         buyer = {
-            'id': 'BY789',
-            'name': 'John',
-            'surname': 'Doe',
-            'gsmNumber': '+905350000000',
-            'email': 'email@email.com',
-            'identityNumber': '74300864791',
-            'registrationDate': '2013-04-21 15:12:09',
-            'registrationAddress': 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
-            'ip': '85.34.78.112',
-            'city': 'Istanbul',
-            'country': 'Turkey',
+            'id': id,
+            'name': name,
+            'surname': surname,
+            'email': email,
+            'identityNumber': identityNumber,
+            'registrationAddress': registrationAddress,
+            'ip': ip,
+            'city': city,
+            'country': country,
         }
 
         address = {
-            'contactName': 'Jane Doe',
-            'city': 'Istanbul',
-            'country': 'Turkey',
-            'address': 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
+            'contactName': f"{name} {surname}",
+            'city': city,
+            'country': country,
+            'address': registrationAddress,
         }
 
         basket_items = [
             {
                 'id': 'BI101',
-                'name': 'Binocular',
+                'name': 'Socialmeter Web Service',
                 'category1': 'Collectibles',
                 'itemType': 'PHYSICAL',
-                'price': '1'
+                'price': price
             }
         ]
 
         request = {
             'locale': 'tr',
-            'price': '1',
-            'paidPrice': '1.2',
+            'conversationId': '123456789',
+            'price': price,
+            'paidPrice': price,
             'currency': 'TRY',
             'installment': '1',
-            'basketId': 'B67832',
+            'basketId': 'BI101',
             'paymentCard': payment_card,
             'buyer': buyer,
             'shippingAddress': address,
@@ -146,7 +160,8 @@ class IyzicoPayHandler():
         }
 
         payment = iyzipay.Payment().create(request, self.options)
-        return payment
+
+        return payment.read().decode('utf-8')
 
     async def create_sub_product(self, name, description):
         """ 
@@ -172,10 +187,18 @@ class IyzicoPayHandler():
         """
 
         request = {
+            "addressIgnorable": 0,
+            "conversationId": "123456789",
+            "currencyCode": "TRY",
+            "description": "test product new",
+            "encodedImageFile": iyzipay.IyziFileBase64Encoder.encode("./static/images/image.png"),
+            "installmentRequested": False,
             "locale": "tr",
-            "name": name,
-            "description": description
+            "name": "awsome product",
+            "price": "1.0",
+            "soldLimit": True
         }
+
 
         report = iyzipay.IyziLinkProduct().create(request, self.options)
         return report.read().decode('utf-8')
@@ -227,6 +250,7 @@ class IyzicoPayHandler():
             contactName
             ):
         """TODO"""
+
         billingAdress = {
             "address": address,
             "zipCode": zipCode,
@@ -257,7 +281,7 @@ class IyzicoPayHandler():
             
         }
 
-        report = iyzipay.IyziLinkProduct().create(request, self.options)
+        report = iyzipay.SubMerchant().create(request, self.options)
         return report.read().decode('utf-8')
     
     async def activate_subscription(self, subscriptionReferenceCode):
@@ -363,6 +387,15 @@ class IyzicoPayHandler():
         report = iyzipay.CheckoutFormInitialize().create(request, self.options)
         return report.read().decode('utf-8')
     
+    async def get_payment_details(self, paymentId=None, paymentConversationId=None):
+
+        request = {
+            'paymentId': paymentId,
+            'paymentConversationId': paymentConversationId,
+        }
+        report =  iyzipay.Payment().retrieve(request, self.options)
+        return report.read().decode('utf-8')
+
     async def retrieveCheckOutForm(self, token):
 
         request =  {
